@@ -21,7 +21,7 @@ public class AccountService {
 
     public List<Account> getAllAccounts() {
 
-        return new ArrayList<>(accounts.values());
+        return new ArrayList<Account>(accounts.values());
     }
 
     public Account getAccount(Long id) {

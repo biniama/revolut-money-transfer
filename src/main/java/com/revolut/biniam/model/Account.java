@@ -1,12 +1,13 @@
 package com.revolut.biniam.model;
 
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * @author Biniam Asnake
  */
-@Data
-public class Account {
+public @Data class Account {
 
     private Long id;
 
