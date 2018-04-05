@@ -1,13 +1,12 @@
-package com.revolut.biniam.model;
+package com.revolut.biniam.money.transfer.model;
 
 import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
 
 /**
  * @author Biniam Asnake
  */
-public @Data class Account {
+@Data
+public class Account {
 
     private Long id;
 

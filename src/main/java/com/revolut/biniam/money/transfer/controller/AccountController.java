@@ -1,7 +1,7 @@
-package com.revolut.biniam.controller;
+package com.revolut.biniam.money.transfer.controller;
 
-import com.revolut.biniam.model.Account;
-import com.revolut.biniam.service.AccountService;
+import com.revolut.biniam.money.transfer.model.Account;
+import com.revolut.biniam.money.transfer.service.AccountService;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
@@ -15,7 +15,7 @@ import java.util.List;
 @Produces(MediaType.APPLICATION_JSON)
 public class AccountController {
 
-    AccountService accountService = new AccountService();
+    private AccountService accountService = AccountService.getInstance();
 
     @GET
     public List<Account> getAllAccounts() {
@@ -24,14 +24,14 @@ public class AccountController {
     }
 
     @POST
-    public Account getAccount(Account account) {
+    public Account addAccount(Account account) {
 
         return accountService.addAccount(account);
     }
 
     @GET
     @Path("{accountId}")
-    public Account getAccounts(@PathParam("accountId") Long id) {
+    public Account getAccount(@PathParam("accountId") Long id) {
 
         return accountService.getAccount(id);
     }
@@ -46,8 +46,8 @@ public class AccountController {
 
     @DELETE
     @Path("{accountId}")
-    public void deleteAccount(@PathParam("accountId") Long id) {
+    public Account deleteAccount(@PathParam("accountId") Long id) {
 
-        accountService.removeAccount(id);
+        return accountService.removeAccount(id);
     }
 }

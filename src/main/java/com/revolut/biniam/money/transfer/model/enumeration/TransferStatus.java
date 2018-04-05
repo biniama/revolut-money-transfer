@@ -1,4 +1,4 @@
-package com.revolut.biniam.model.enumeration;
+package com.revolut.biniam.money.transfer.model.enumeration;
 
 /**
  * @author Biniam Asnake
