@@ -16,3 +16,8 @@
 # Out of Scope
 * Implementing Security/Authentication
 * UI design
+
+# Build and Run using Jetty
+`
+mvn clean package jetty:run
+`

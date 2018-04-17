@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import static com.revolut.biniam.money.transfer.exception.AccountException.ACCOUNT_NOT_FOUND_EXCEPTION;
 import static com.revolut.biniam.money.transfer.exception.AccountException.INVALID_ACCOUNT_EXCEPTION;
 
 /**
@@ -31,7 +32,7 @@ public class AccountService {
          accounts.put(1L, new Account(1L, "Biniam", "Asnake", "+4917621003292", 1000.00));
          accounts.put(2L, new Account(2L, "Kidan", "Lakew", "+4917621003288", 8000.00));
          accounts.put(3L, new Account(3L, "Hasset", "Biniam", "+491111111111", 50000.00));
-         accounts.put(4L, new Account(4L, "Barok", "Biniam", "+4922222222222", 70000.00));
+         accounts.put(4L, new Account(4L, "Naod", "Biniam", "+4922222222222", 70000.00));
     }
 
     public List<Account> getAllAccounts() {
@@ -40,7 +41,14 @@ public class AccountService {
     }
 
     public Account getAccount(Long id) {
-        return accounts.get(id);
+
+        Account account = accounts.get(id);
+
+        if (account == null) {
+            throw new AccountException("Account with id " + id.toString() + " is invalid.", ACCOUNT_NOT_FOUND_EXCEPTION);
+        }
+
+        return account;
     }
 
     public Account addAccount(Account account) {

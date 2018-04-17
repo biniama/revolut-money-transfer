@@ -46,6 +46,8 @@ public class TransferService {
 
     public Transfer transfer(Transfer transfer) {
 
+        transfer.setStatus(TransferStatus.PROCESSING);
+
         Account sender = transfer.getSender();
         Account receiver = transfer.getReceiver();
 
@@ -68,9 +70,9 @@ public class TransferService {
             return transfer;
 
         } else {
+            transfer.setStatus(TransferStatus.FAILED);
             throw new TransferException("Insufficient balance", INSUFFICIENT_BALANCE_EXCEPTION);
         }
-
     }
 
     @Deprecated
