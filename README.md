@@ -14,9 +14,14 @@
 * Connect to real Database
 * UI design
 
-# Build and Run using Jetty
+# Build using Jetty and create UberJar
 `
-mvn clean package jetty:run
+mvn clean package
+`
+
+# Run the UberJar
+`
+java -jar target/money-transfer.jar
 `
 
 # Roadmap
