@@ -15,9 +15,13 @@ import javax.ws.rs.core.Response;
 import static org.junit.Assert.assertEquals;
 
 /**
+ * Tests for AccountController
+ *
  * @author Biniam Asnake
  */
 public class AccountControllerTest extends JerseyTest {
+
+    private static final String PATH_ACCOUNT = "account";
 
     @Override
     protected Application configure() {
@@ -26,15 +30,16 @@ public class AccountControllerTest extends JerseyTest {
 
     @Test
     public void getAllAccounts() {
-        final String response = target("account")
+
+        final String response = target(PATH_ACCOUNT)
                 .request(MediaType.APPLICATION_JSON_TYPE)
                 .accept(MediaType.APPLICATION_JSON_TYPE)
                 .get(String.class);
 
-        assertEquals("[{\"balance\":1000.0,\"firstName\":\"Biniam\",\"id\":1,\"lastName\":\"Asnake\",\"phoneNumber\":\"+4917621003292\"}," +
-                        "{\"balance\":8000.0,\"firstName\":\"Kidan\",\"id\":2,\"lastName\":\"Lakew\",\"phoneNumber\":\"+4917621003288\"}," +
-                        "{\"balance\":50000.0,\"firstName\":\"Hasset\",\"id\":3,\"lastName\":\"Biniam\",\"phoneNumber\":\"+491111111111\"}," +
-                        "{\"balance\":70000.0,\"firstName\":\"Naod\",\"id\":4,\"lastName\":\"Biniam\",\"phoneNumber\":\"+4922222222222\"}]",
+        assertEquals("[{\"balance\":8000.0,\"firstName\":\"Kidan\",\"id\":2,\"lastName\":\"Lakew\",\"phoneNumber\":\"+4917621003288\"}," +
+                "{\"balance\":49900.0,\"firstName\":\"Hasset\",\"id\":3,\"lastName\":\"Biniam\",\"phoneNumber\":\"+491111111111\"}," +
+                "{\"balance\":3888.0,\"firstName\":\"John\",\"id\":4,\"lastName\":\"Doe\",\"phoneNumber\":\"555-456-9877\"}," +
+                "{\"balance\":0.0,\"firstName\":\"New first name\",\"id\":10,\"lastName\":\"New last name\",\"phoneNumber\":\"000000000\"}]",
                 response);
     }
 
@@ -42,18 +47,18 @@ public class AccountControllerTest extends JerseyTest {
     public void shouldAddAccount() {
 
         String data = "{" +
-            "\"firstName\":\"Kidan\", " +
-                "\"lastName\": \"Lakew\", " +
-                "\"phoneNumber\": \"+49333333333\", " +
-                "\"balance\": 3000.00 " +
+            "\"firstName\":\"Bole\", " +
+                "\"lastName\": \"Lale\", " +
+                "\"phoneNumber\": \"+494444444444\", " +
+                "\"balance\": 3500.00 " +
                 "}";
 
-        final Response response = target("account")
+        final Response response = target(PATH_ACCOUNT)
                 .request(MediaType.APPLICATION_JSON_TYPE)
                 .accept(MediaType.APPLICATION_JSON_TYPE)
                 .post(Entity.json(data));
 
-        assertEquals(response.getStatus(), 200);
+        assertEquals(200, response.getStatus());
     }
 
     @Test
@@ -65,12 +70,12 @@ public class AccountControllerTest extends JerseyTest {
         account.setPhoneNumber("555-456-9877");
         account.setBalance(3888.00);
 
-        final Response response = target("account")
+        final Response response = target(PATH_ACCOUNT)
                 .request(MediaType.APPLICATION_JSON_TYPE)
                 .accept(MediaType.APPLICATION_JSON_TYPE)
                 .post(Entity.json(account));
 
-        assertEquals(response.getStatus(), 200);
+        assertEquals(200, response.getStatus());
     }
 
     @Test
@@ -82,15 +87,35 @@ public class AccountControllerTest extends JerseyTest {
         account.setPhoneNumber("000000000");
         account.setBalance(0000.00);
 
-        Response response = target("/account/10").request()
+        final Response response = target(PATH_ACCOUNT + "/10")
+                .request()
                 .put(Entity.entity(account, MediaType.APPLICATION_JSON));
 
-        Assert.assertEquals(response.getStatus(), 200);
+        assertEquals(200, response.getStatus());
+    }
+
+    @Test
+    public void shoudlDeleteAccount() {
+
+        final String response = target(PATH_ACCOUNT + "/1")
+                .request()
+                .delete(String.class);
+
+        Assert.assertEquals("{\"balance\":1000.0," +
+                        "\"firstName\":\"Biniam\"," +
+                        "\"id\":1," +
+                        "\"lastName\":\"Asnake\"," +
+                        "\"phoneNumber\":\"+4917621003292\"}",
+                response);
     }
 
     @Test(expected = InternalServerErrorException.class)
-    public void shouldThrowAccountNotFoundException() {
-        String response = target("account/999").request().get(String.class);
+    public void shouldThrowExceptionWhenInvalidAccountIsGiven() {
+
+        final String response = target(PATH_ACCOUNT + "/999")
+                .request()
+                .get(String.class);
+
         Assert.assertTrue("Account with id 999 is invalid".equals(response));
     }
 }

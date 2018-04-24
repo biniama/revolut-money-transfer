@@ -8,6 +8,9 @@ import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
 
 /**
+ * An exception mapper provider that intercepts all 500 exceptions and
+ * shows a proper and meaningful message to the end user.
+ *
  * @author Biniam Asnake
  */
 @Provider

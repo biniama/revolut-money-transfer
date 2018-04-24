@@ -13,8 +13,11 @@ import java.util.Map;
 
 import static com.revolut.biniam.money.transfer.exception.AccountException.ACCOUNT_NOT_FOUND_EXCEPTION;
 import static com.revolut.biniam.money.transfer.exception.TransferException.INSUFFICIENT_BALANCE_EXCEPTION;
+import static com.revolut.biniam.money.transfer.exception.TransferException.SAME_ACCOUNT_TRANSFER_EXCEPTION;
 
 /**
+ * Transfer Service that defines the main business logic of creating, reading, updating and deleting transfers.
+ *
  * @author Biniam Asnake
  */
 public class TransferService {
@@ -25,25 +28,64 @@ public class TransferService {
 
     private static TransferService instance;
 
+    /**
+     * Creates a Singleton instance of TransferService.
+     * This is very useful because we need a single instance of the service.
+     *
+     * @return single instance of TransferService
+     */
     public static synchronized TransferService getInstance() {
 
         if (instance == null) {
             instance = new TransferService();
         }
+
         return instance;
     }
 
     private TransferService() {}
 
+    /**
+     * Get all transfers
+     *
+     * @return List of Transfers
+     */
     public List<Transfer> getAllTransfers() {
 
         return new ArrayList<Transfer>(transfers.values());
     }
 
+    /**
+     * Retrieves transfer based on id
+     *
+     * @param id: Long variable representing the ID of the transfer
+     * @return Transfer object if found. Otherwise, null
+     */
     public Transfer getTransfer(Long id) {
-        return transfers.get(id);
+
+        Transfer transfer = transfers.get(id);
+
+        if (transfer == null) {
+            throw new AccountException("Transfer with id " + id.toString() + " is invalid.", ACCOUNT_NOT_FOUND_EXCEPTION);
+        }
+
+        return transfer;
     }
 
+    /**
+     * Main business logic for transferring money from one account to another.
+     *
+     * Requirements for successful money transfer:
+     *  1. Sender AND receiver accounts must not be null
+     *  2. Both sender and receiver cannot be the same account
+     *  3. The Senders account balance should be equal or greater than the transfer amount.
+     *
+     *  Otherwise, money transfer is not possible.
+     *
+     * @param transfer: transfer object containing information about the money transfer
+     * @return The created Transfer object if everything is successful.
+     * Otherwise, either AccountException or TransferException will be thrown.
+     */
     public Transfer transfer(Transfer transfer) {
 
         transfer.setStatus(TransferStatus.PROCESSING);
@@ -53,6 +95,10 @@ public class TransferService {
 
         if (sender == null || receiver == null) {
             throw new AccountException("Either sender or receiver account is invalid", ACCOUNT_NOT_FOUND_EXCEPTION);
+        }
+
+        if (sender.getId().equals(receiver.getId())) {
+            throw new TransferException("Both sender and receiver cannot be the same account", SAME_ACCOUNT_TRANSFER_EXCEPTION);
         }
 
         if (sender.getBalance() >= transfer.getAmount()) {
@@ -75,30 +121,12 @@ public class TransferService {
         }
     }
 
-    @Deprecated
-    public Transfer transfer(TransferDto transferDto) {
-
-        Account senderAccount = accountService.getAccount(transferDto.getSenderId());
-
-        Account receiverAccount = accountService.getAccount(transferDto.getReceiverId());
-
-        senderAccount.setBalance(senderAccount.getBalance() - transferDto.getAmount());
-        accountService.updateAccount(senderAccount);
-
-        receiverAccount.setBalance(receiverAccount.getBalance() + transferDto.getAmount());
-        accountService.updateAccount(receiverAccount);
-
-        Transfer transfer = new Transfer(transfers.size() + 1L,
-                                            senderAccount,
-                                            receiverAccount,
-                                            transferDto.getAmount(),
-                                            TransferStatus.SUCCESSFUL);
-
-        transfers.put(transfer.getId(), transfer);
-
-        return transfer;
-    }
-
+    /**
+     * Updates Transfer if it is available in the {code}transfer{code} map
+     *
+     * @param transfer: Transfer to be updated
+     * @return The updated Transfer object
+     */
     public Transfer updateTransfer(Transfer transfer) {
 
         if (transfer.getId() == null || transfer.getId() <= 0) {
@@ -109,6 +137,12 @@ public class TransferService {
         return transfer;
     }
 
+    /**
+     * Deletes transfer from the map based on id
+     *
+     * @param id: Id of the transfer to be deleted
+     * @return The deleted Transfer object
+     */
     public Transfer removeTransfer(Long id) {
         return transfers.remove(id);
     }

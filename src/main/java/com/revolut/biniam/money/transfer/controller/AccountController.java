@@ -8,6 +8,8 @@ import javax.ws.rs.core.MediaType;
 import java.util.List;
 
 /**
+ * API endpoints for performing CRUD operation on Account
+ *
  * @author Biniam Asnake
  */
 @Path("account")

@@ -10,6 +10,8 @@ import javax.ws.rs.core.MediaType;
 import java.util.List;
 
 /**
+ * API endpoints for performing CRUD operation on Money Transfer
+ *
  * @author Biniam Asnake
  */
 @Path("transfer")
@@ -18,6 +20,7 @@ import java.util.List;
 public class TransferController {
 
     private TransferService transferService = TransferService.getInstance();
+
     private MapperService mapperService = new MapperService();
 
     @GET
